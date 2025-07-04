@@ -1,39 +1,4 @@
-// // Helper to generate combinations
-// function generateCombinations(matrix, k, start = 0, path = [], result = []) {
-//   if (path.length === k) {
-//     result.push([...path]);
-//     return;
-//   }
-//   for (let i = start; i < matrix.length; i++) {
-//     for (let item of matrix[i]) {
-//       path.push(item);
-//       generateCombinations(matrix, k, i + 1, path, result);
-//       path.pop();
-//     }
-//   }
-//   return result;
-// }
-
-// export const createCombinationService = async (items, length) => {
-//   if (length < 2 || length > items.length || items.length > 26) {
-//     return { error: 'Invalid combination input' };
-//   }
-
-//   // Create a matrix like [['A1', 'A2'], ['B1'], ['C1', 'C2']]
-//   const letters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
-//   const matrix = items.map((count, idx) => {
-//     return Array.from({ length: count }, (_, i) => `${letters[idx]}${i + 1}`);
-//   });
-
-//   const generated = generateCombinations(matrix, length);
-//   combinationsStore = [...combinationsStore, ...generated];
-
-//   return { combinations: generated };
-// };
-
-// export const getAllCombinationsService = async () => {
-//   return { combinations: combinationsStore };
-// };
+const letters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('');
 
 class CombinationService {
     constructor() {
@@ -41,23 +6,49 @@ class CombinationService {
     }
   
     createCombination(data) {
-      // Here you can handle combination creation logic
-      // e.g., data = { length: 3, items: [2, 1, 2] }
+      const generatedItemsMatrix = data.items.map((count, idx) => {
+        return Array.from({ length: count }, (_, i) => `${letters[idx]}${i + 1}`);
+      });
   
-      const generatedLetters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('');
-      const generatedItemsMatrix = [];
-  
-      for (let i = 0; i < data.items.length; i++) {
-        generatedItemsMatrix[i] = [];
-        for (let j = 0; j < data.items[i]; j++) {
-          generatedItemsMatrix[i].push(`${generatedLetters[i]}${j + 1}`);
+      const generatedCombinations = [];
+
+      let index = 0;
+      const currentGeneratedCombination = [];
+      while(currentGeneratedCombination.length !== data.length && index < generatedItemsMatrix.length) {
+        if(currentGeneratedCombination.length === data.length - 1) {
+          currentGeneratedCombination.push(generatedItemsMatrix[index][0]);
+          generatedCombinations.push([...currentGeneratedCombination]);
+
+          //optmal will be after adding ombination add all possibles for thet indexes
+
+          // Clean up last element if necessary
+          if(generatedItemsMatrix.length - index > 0) {
+            currentGeneratedCombination.pop();
+          }
+        } else {
+          currentGeneratedCombination.push(generatedItemsMatrix[index][0]);
         }
+        index ++;
+      }
+
+      while (index >= 0) {
+        //find thet itm array
+        for (let i = 0; i < generatedCombinations.length; i ++) {
+          let item = [...generatedCombinations[i]];
+  
+          //find needed item here generatedItemsMatrix and add all missed part
+          const curentItemMatrix = generatedItemsMatrix.find(subArray => subArray[0] === generatedCombinations[i][index]) || [];
+          for (let j = 1; j < curentItemMatrix.length; j ++) {
+            item[index] = curentItemMatrix[j];
+            generatedCombinations.push([...item]);
+          }
+        }
+  
+        index --;
       }
   
-      // For demo: return the matrix
       return {
-        length: data.length,
-        matrix: generatedItemsMatrix,
+        generatedCombinations: generatedCombinations,
       };
     }
   
