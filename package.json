@@ -1,0 +1,26 @@
+{
+  "name": "combinations",
+  "type": "module",
+  "version": "1.0.0",
+  "description": "Create an API using Node.js and MySQL to generate combinations from a list of items and store them in the database. The API should respect a rule where items starting with the same letter cannot be combined.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/anahitvanoyan11/combinations.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/anahitvanoyan11/combinations/issues"
+  },
+  "homepage": "https://github.com/anahitvanoyan11/combinations#readme",
+  "dependencies": {
+    "dotenv": "^17.0.1",
+    "express": "^5.1.0",
+    "mysql2": "^3.14.1"
+  }
+}
