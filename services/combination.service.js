@@ -6,49 +6,67 @@ class CombinationService {
     }
   
     createCombination(data) {
+      // Step 1: Build matrix of generated items, like [['A1', 'A2'], ['B1'], ['C1', 'C2']]
       const generatedItemsMatrix = data.items.map((count, idx) => {
         return Array.from({ length: count }, (_, i) => `${letters[idx]}${i + 1}`);
       });
-  
-      const generatedCombinations = [];
 
-      let index = 0;
-      const currentGeneratedCombination = [];
-      while(currentGeneratedCombination.length !== data.length && index < generatedItemsMatrix.length) {
-        if(currentGeneratedCombination.length === data.length - 1) {
-          currentGeneratedCombination.push(generatedItemsMatrix[index][0]);
-          generatedCombinations.push([...currentGeneratedCombination]);
+      const allCombinations = [];
 
-          //optmal will be after adding ombination add all possibles for thet indexes
+      // Step 2: Loop through each starting index to build initial combinations
+      for (let i = 0; i <= generatedItemsMatrix.length - data.length; i++) {
+        const currentCombination = [];
+        const currentIndexes = [];
+        let currentMatrixIndex = i;
 
-          // Clean up last element if necessary
-          if(generatedItemsMatrix.length - index > 0) {
-            currentGeneratedCombination.pop();
+        // Step 3: Build a base combination using the first items of each relevant column
+        while (currentCombination.length !== data.length && currentMatrixIndex < generatedItemsMatrix.length) {
+          if (currentCombination.length === data.length - 1) {
+            // Add last item to make combination complete
+            currentCombination.push(generatedItemsMatrix[currentMatrixIndex][0]);
+            currentIndexes.push(currentMatrixIndex);
+
+            // Expand that base into all possible variations
+            generateAllCombinations([...currentCombination], currentIndexes);
+
+            // Clean up the last pushed element for next loop if needed
+            if (generatedItemsMatrix.length - currentMatrixIndex > 0 && currentCombination.length > 1) {
+              currentCombination.pop();
+              currentIndexes.pop();
+            }
+          } else {
+            // Keep adding first elements to reach desired combination length
+            currentCombination.push(generatedItemsMatrix[currentMatrixIndex][0]);
+            currentIndexes.push(currentMatrixIndex);
           }
-        } else {
-          currentGeneratedCombination.push(generatedItemsMatrix[index][0]);
+          currentMatrixIndex++;
         }
-        index ++;
       }
 
-      while (index >= 0) {
-        //find thet itm array
-        for (let i = 0; i < generatedCombinations.length; i ++) {
-          let item = [...generatedCombinations[i]];
-  
-          //find needed item here generatedItemsMatrix and add all missed part
-          const curentItemMatrix = generatedItemsMatrix.find(subArray => subArray[0] === generatedCombinations[i][index]) || [];
-          for (let j = 1; j < curentItemMatrix.length; j ++) {
-            item[index] = curentItemMatrix[j];
-            generatedCombinations.push([...item]);
+      // Helper: Expand base combination by replacing each item with all possible options in its column
+      function generateAllCombinations(baseCombination, columnIndexes) {
+        const expandedCombinations = [baseCombination];
+        let positionToModify = data.length - 1;
+
+        while (positionToModify >= 0) {
+          const snapshot = expandedCombinations.slice(); // prevent growing while looping
+          for (let i = 0; i < snapshot.length; i++) {
+            const combinationCopy = [...snapshot[i]];
+            const matrixRow = generatedItemsMatrix[columnIndexes[positionToModify]];
+
+            for (let j = 1; j < matrixRow.length; j++) {
+              combinationCopy[positionToModify] = matrixRow[j];
+              expandedCombinations.push([...combinationCopy]);
+            }
           }
+          positionToModify--;
         }
-  
-        index --;
+
+        allCombinations.push(...expandedCombinations);
       }
-  
+
       return {
-        generatedCombinations: generatedCombinations,
+        combinations: allCombinations,
       };
     }
   
