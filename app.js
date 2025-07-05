@@ -1,6 +1,6 @@
 import express from 'express';
 import dotenv from 'dotenv';
-import { db } from './db.js';
+import { db } from './db/connection.js';
 import combinationRoutes from './routes/combinations.routes.js';
 
 dotenv.config();
@@ -15,7 +15,10 @@ const PORT = process.env.PORT || 3000;
 
 const startServer = async () => {
   try {
-    await db.connect();
+    const connection = await db.getConnection();
+    await connection.ping(); // ✅ ping to confirm DB is reachable
+    connection.release();    // release back to pool
+
     console.log('✅ Connected to MySQL');
 
     app.listen(PORT, () => {
