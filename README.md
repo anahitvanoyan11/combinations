@@ -18,28 +18,33 @@ Create an API using Node.js and MySQL to generate unique combinations from a lis
 
 ---
 
-🗄️ MySQL Setup
+## 🗄️ MySQL Setup
 1.	Copy the example.env file to a new .env in your project root.
     Set your MySQL connection credentials there:
+
+```
+# Database Configuration
     MYSQL_HOST=localhost
     MYSQL_USER=root
     MYSQL_PASSWORD=your_password
     MYSQL_DATABASE=combinations_db
     MYSQL_PORT=3306
 
+```
+
 2.	Create the database and tables, without using any ORM:
-```bash
+```
     mysql -u root -p < db/schema.js
 ```
 
-    This will run the SQL in schema.js to create the necessary tables:
-	•	responses (to store combinations and cache them)
+This will run the SQL in schema.js to create the necessary tables:
+   - responses (to store combinations and cache them)
 3.	Start the Node.js app:
 ```bash
     node app.js
 ```
 
-📬 API Usage
+## 📬 API Usage
 
 POST /api/combination
 
@@ -84,9 +89,8 @@ Request Body:
 }
 ```
 
-🛠️ Tech Stack & Architecture
-	•	Node.js + Express
-	•	MySQL with manual SQL scripts (no ORM)
-	•	Celebrate + Joi for input validation with custom messages
-	•	Central Error-Handling Middleware
-	•	MySQL transactions for caching input–output pairs
+## 🛠️ Tech Stack & Architecture
+   -  Node.js + Express
+   -  MySQL with manual SQL scripts (no ORM)
+   -  Celebrate + Joi for input validation with custom messages
+   -  MySQL transactions for caching input–output pairs
